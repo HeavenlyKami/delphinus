@@ -6,16 +6,17 @@ import { selectEth } from './EthSlice';
 
 export const Eth = () => {
 	const dispatch = useAppDispatch();
+	
 	useEffect(() => {
 		dispatch(fetchBlockHeight());
 	}, [dispatch]);
-	
-	const sides = useAppSelector(selectEth);
-	console.log(sides)
+
+	const { ethLoading, blockHeight } = useAppSelector(selectEth);
 	return (
 		<>
-			<div>The height: </div> 
-			{sides}
+			<div>The blockHeight of ethereum: </div> 
+			{ethLoading ? 'Loading...' : blockHeight}
+			<button onClick={() => dispatch(fetchBlockHeight())}>Fetch Again</button>
 		</>
 	)
 };

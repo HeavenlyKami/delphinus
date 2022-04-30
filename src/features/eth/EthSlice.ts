@@ -7,14 +7,13 @@ export const fetchBlockHeight = createAsyncThunk(
 	async () => {
 		const web3 = new Web3("https://cloudflare-eth.com");
 		const response = await web3.eth.getBlockNumber();
-		console.log(response)
 		return response
 	}
 )
 
 export interface EthState {
-	ethLoading: Boolean,
-	blockHeight: Number
+	ethLoading: boolean,
+	blockHeight: number
 };
 
 const initialState: EthState = {
@@ -29,14 +28,23 @@ export const ethSlice = createSlice({
 		// standard reducer logic, with auto-generated action types per reducer
 	},
 	extraReducers: (builder) => {
-		builder.addCase(fetchBlockHeight.fulfilled, (state, action) => {
-			state.ethLoading = false;
-			state.blockHeight = action.payload;
-		})
+		builder
+			.addCase(fetchBlockHeight.pending, (state) => {
+				state.ethLoading = true;
+			})
+			.addCase(fetchBlockHeight.fulfilled, (state, action) => {
+				state.ethLoading = false;
+				state.blockHeight = action.payload;
+			})
 	}
 });
 
-export const selectEth = (state: AppRootState) => { return state.eth.blockHeight };
+export const selectEth = (state: AppRootState) => { 
+	return {
+		ethLoading: state.eth.ethLoading,
+		blockHeight: state.eth.blockHeight
+	}
+};
 
 export default ethSlice.reducer;
 
